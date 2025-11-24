@@ -2,7 +2,11 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Customer Registration', () => {
   
+  const user = { email: '211dontstoptolearn@gmail.com' };
+  
   test('Success registratiuon', async ({ request}) => {
+    
+    await test.step('Registration', async () => {
     const response = await request.post('/api/v1/customers/auth/sign-up', {
       data: {
         password: "Password123!",
@@ -18,6 +22,30 @@ test.describe('Customer Registration', () => {
 
     expect(body).toHaveProperty('user');
     expect(body.user.email).toBe(user.email);
+  });
+
+  await test.step('Authorization', async () => {
+     const response = await request.post('/api/v1/customers/auth/sign-in', {
+      headers: {
+        'X-Fingerprint': 'playwright'
+      },
+      data: {
+        email: "211dontstoptolearn@gmail.com",
+        password: "Password123!"
+      }
+    });
+
+    expect(response.status()).toBe(200);
+    const body = await response.json();
+
+    console.log(body);
+
+    expect(body).toHaveProperty('user');
+    expect(body).toHaveProperty('token');
+    expect(body.user.email).toBe(user.email);
+    expect(body.user.userOnRole[0].role.type).toBe('CUSTOMER');
+  });
+
   });
 
   test('Registration with empty email field', async ({ request}) => {
@@ -197,6 +225,7 @@ test.describe('Customer Registration', () => {
     expect(body.error).toBe('Bad Request');
 
   });
+
 
   
 });
