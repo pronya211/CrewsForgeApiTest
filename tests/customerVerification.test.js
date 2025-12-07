@@ -113,7 +113,7 @@ test('Accept code for verification customer with email Helper', async ({ request
     });
 
     await test.step('Get verification code from email', async () => {
-      const verificationCode = await emailHelper.getVerificationCode(testEmail, 60000); // Увеличил до 60 секунд
+      const verificationCode = await emailHelper.getVerificationCode(testEmail, 60000);
       console.log('Verification code from email:', verificationCode);
       
       expect(verificationCode).toBeTruthy();
